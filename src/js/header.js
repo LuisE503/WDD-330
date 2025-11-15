@@ -15,7 +15,6 @@ function getHeaderHTML() {
     <div class="header-container">
       <div class="logo">
         <a href="/index.html">
-          <img src="/images/logo.svg" alt="SleepOutside Logo" />
           <span class="logo-text">Sleep<span class="logo-accent">Outside</span></span>
         </a>
       </div>
@@ -49,10 +48,9 @@ function getHeaderHTML() {
         
         <a href="/cart.html" class="cart-link" aria-label="Shopping cart with ${cartCount} items">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M9 2L7 8H21L19 2H9Z" />
-            <path d="M7 8L5 22H19L17 8" />
-            <circle cx="9" cy="21" r="1" />
-            <circle cx="17" cy="21" r="1" />
+            <circle cx="9" cy="21" r="1"/>
+            <circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
           </svg>
           <span id="cart-count" class="cart-badge" ${cartCount === 0 ? 'style="display:none;"' : ''}>${cartCount}</span>
         </a>

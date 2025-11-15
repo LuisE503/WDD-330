@@ -25,7 +25,7 @@
         <article class="category-card">
           <a href="product-list.html?category=Tents">
             <div class="category-image">
-              <img src="/images/categories/tents.jpg" alt="Tents" loading="lazy">
+              <img src="https://placehold.co/400x300/2c5f2d/ffffff?text=Tents" alt="Tents" loading="lazy">
             </div>
             <h3>Tents</h3>
             <p>Durable shelters for any adventure</p>
@@ -35,7 +35,7 @@
         <article class="category-card">
           <a href="product-list.html?category=Backpacks">
             <div class="category-image">
-              <img src="/images/categories/backpacks.jpg" alt="Backpacks" loading="lazy">
+              <img src="https://placehold.co/400x300/97c05c/ffffff?text=Backpacks" alt="Backpacks" loading="lazy">
             </div>
             <h3>Backpacks</h3>
             <p>Carry everything you need comfortably</p>
@@ -45,7 +45,7 @@
         <article class="category-card">
           <a href="product-list.html?category=Sleeping%20Bags">
             <div class="category-image">
-              <img src="/images/categories/sleeping-bags.jpg" alt="Sleeping Bags" loading="lazy">
+              <img src="https://placehold.co/400x300/4a7c59/ffffff?text=Sleeping+Bags" alt="Sleeping Bags" loading="lazy">
             </div>
             <h3>Sleeping Bags</h3>
             <p>Stay warm on cold nights</p>
@@ -55,7 +55,7 @@
         <article class="category-card">
           <a href="product-list.html?category=Hammocks">
             <div class="category-image">
-              <img src="/images/categories/hammocks.jpg" alt="Hammocks" loading="lazy">
+              <img src="https://placehold.co/400x300/6b8e23/ffffff?text=Hammocks" alt="Hammocks" loading="lazy">
             </div>
             <h3>Hammocks</h3>
             <p>Relax in style anywhere</p>
@@ -74,100 +74,5 @@
 
   <script type="module" src="src/js/header.js"></script>
   <script type="module" src="src/js/footer.js"></script>
-</body>
-</html>
-
-        name: 'Winter Sleeping Bag',
-        price: 149.99,
-        image: 'https://via.placeholder.com/300x200/2196F3/ffffff?text=Sleeping+Bag'
-      },
-      {
-        id: 'backpack-01',
-        name: 'Trail Backpack 50L',
-        price: 179.99,
-        finalPrice: 134.99,
-        image: 'https://via.placeholder.com/300x200/FF9800/ffffff?text=Backpack'
-      },
-      {
-        id: 'stove-01',
-        name: 'Portable Camp Stove',
-        price: 89.99,
-        image: 'https://via.placeholder.com/300x200/9C27B0/ffffff?text=Camp+Stove'
-      }
-    ];
-
-    /**
-     * Render product card HTML
-     */
-    function renderProductCard(product) {
-      const discountBadge = createDiscountBadge(product);
-      const price = product.finalPrice ?? product.price;
-      const originalPrice = isDiscounted(product) 
-        ? `<span class="product-original-price">${formatUSD(product.price)}</span>` 
-        : '';
-      const priceClass = isDiscounted(product) ? 'product-price discounted' : 'product-price';
-
-      return `
-        <li class="product-card">
-          <img src="${product.image}" alt="${product.name}" class="product-image">
-          <div class="product-header">
-            <h2 class="product-name">${product.name}</h2>
-            ${discountBadge}
-          </div>
-          <p class="${priceClass}">
-            ${formatUSD(price)}
-            ${originalPrice}
-          </p>
-          <button class="add-to-cart-btn" data-id="${product.id}" aria-label="Add ${product.name} to cart">
-            Add to Cart
-          </button>
-        </li>
-      `;
-    }
-
-    /**
-     * Render all products
-     */
-    function renderProducts() {
-      const productList = document.getElementById('product-list');
-      if (!productList) return;
-
-      productList.innerHTML = products.map(renderProductCard).join('');
-
-      // Add event listeners to "Add to Cart" buttons
-      const addButtons = document.querySelectorAll('.add-to-cart-btn');
-      addButtons.forEach(button => {
-        button.addEventListener('click', handleAddToCart);
-      });
-    }
-
-    /**
-     * Handle add to cart click
-     */
-    function handleAddToCart(event) {
-      const button = event.currentTarget;
-      const productId = button.getAttribute('data-id');
-      const product = products.find(p => p.id === productId);
-
-      if (product) {
-        addToCart(product);
-        
-        // Visual feedback
-        button.textContent = 'Added!';
-        button.style.background = '#28a745';
-        
-        setTimeout(() => {
-          button.textContent = 'Add to Cart';
-          button.style.background = '';
-        }, 1000);
-      }
-    }
-
-    // Initialize product listing page
-    document.addEventListener('DOMContentLoaded', () => {
-      renderCartCount();
-      renderProducts();
-    });
-  </script>
 </body>
 </html>

@@ -34,16 +34,39 @@ function renderProductDetail(product, container) {
   const hasDiscount = isDiscounted(product);
   const discount = hasDiscount ? discountPercent(product) : 0;
   
-  // Get responsive image
-  const imageSrc = product.images ? getResponsiveImage(product.images) : (product.image ?? '');
-  const srcset = product.images ? createSrcSet(product.images) : '';
+  // Get image - handle different API response formats
+  let imageSrc = '';
+  let srcset = '';
+  
+  if (product.Images) {
+    imageSrc = getResponsiveImage(product.Images);
+    srcset = createSrcSet(product.Images);
+  } else if (product.images) {
+    imageSrc = getResponsiveImage(product.images);
+    srcset = createSrcSet(product.images);
+  } else if (product.Image) {
+    imageSrc = product.Image;
+  } else if (product.image) {
+    imageSrc = product.image;
+  }
+  
+  // Fallback to placeholder
+  const productName = product.Name || product.name || 'Unknown Product';
+  if (!imageSrc) {
+    imageSrc = `https://placehold.co/600x600/2c5f2d/ffffff?text=${encodeURIComponent(productName)}`;
+  }
+  
+  const productId = product.Id || product.id;
+  const category = product.Category || product.category;
+  const description = product.DescriptionHtmlSimple || product.description;
+  const originalPrice = product.SuggestedRetailPrice || product.price;
   
   // Update page title
-  document.title = `${product.name ?? 'Product'} - SleepOutside`;
+  document.title = `${productName} - SleepOutside`;
   
   // Update breadcrumbs with product name
-  if (product.name && product.category) {
-    updateProductBreadcrumb(product.name, product.category);
+  if (productName && category) {
+    updateProductBreadcrumb(productName, category);
   }
   
   container.innerHTML = `
@@ -54,37 +77,36 @@ function renderProductDetail(product, container) {
           src="${imageSrc}" 
           ${srcset ? `srcset="${srcset}"` : ''}
           ${srcset ? `sizes="(max-width: 768px) 100vw, 50vw"` : ''}
-          alt="${product.name ?? 'Product'}"
+          alt="${productName}"
+          onerror="this.src='https://placehold.co/600x600/2c5f2d/ffffff?text=No+Image'"
         />
       </div>
       
       <div class="product-detail-info">
-        <h1 class="product-detail-name">${product.name ?? 'Unknown Product'}</h1>
+        <h1 class="product-detail-name">${productName}</h1>
         
-        ${product.category ? `<p class="product-detail-category">${product.category}</p>` : ''}
+        ${category ? `<p class="product-detail-category">${category}</p>` : ''}
         
         <div class="product-detail-pricing">
           ${hasDiscount ? `
             <div class="pricing-row">
-              <span class="product-price-original">${formatCurrency(product.price)}</span>
+              <span class="product-price-original">${formatCurrency(originalPrice)}</span>
               <span class="badge badge-discount-inline">Save ${discount}%</span>
             </div>
           ` : ''}
           <div class="product-price-final">${formatCurrency(finalPrice)}</div>
         </div>
         
-        ${product.description ? `
+        ${description ? `
           <div class="product-detail-description">
             <h2>Description</h2>
-            <p>${product.description}</p>
+            <div>${description}</div>
           </div>
         ` : ''}
         
-        ${product.stock !== undefined ? `
-          <p class="product-stock ${product.stock > 0 ? 'in-stock' : 'out-of-stock'}">
-            ${product.stock > 0 ? `In Stock (${product.stock} available)` : 'Out of Stock'}
-          </p>
-        ` : ''}
+        <p class="product-stock in-stock">
+          In Stock
+        </p>
         
         <div class="product-actions">
           <label for="quantity">Quantity:</label>
@@ -94,13 +116,12 @@ function renderProductDetail(product, container) {
             name="quantity" 
             value="1" 
             min="1" 
-            ${product.stock !== undefined ? `max="${product.stock}"` : ''}
+            max="99"
             aria-label="Product quantity"
           />
           <button 
             id="add-to-cart-btn" 
             class="btn btn-primary"
-            ${product.stock === 0 ? 'disabled' : ''}
           >
             Add to Cart
           </button>
@@ -119,7 +140,7 @@ function renderProductDetail(product, container) {
       
       if (quantity > 0) {
         addToCart(product, quantity);
-        showAlert(`${product.name} added to cart!`, 'success');
+        showAlert(`${productName} added to cart!`, 'success');
       }
     });
   }
@@ -140,7 +161,12 @@ export async function initProductDetail() {
   const productId = getParam('id');
   
   if (!productId) {
-    container.innerHTML = '<p class="error-message">No product ID provided.</p>';
+    container.innerHTML = `
+      <div class="error-message">
+        <p>⚠️ No product ID provided.</p>
+        <a href="/index.html" class="btn btn-primary">Return to Home</a>
+      </div>
+    `;
     return;
   }
   
@@ -150,7 +176,9 @@ export async function initProductDetail() {
   }
   
   try {
+    console.log('Fetching product:', productId);
     const product = await fetchProduct(productId);
+    console.log('Product loaded:', product);
     
     // Hide loading
     if (loadingElement) {
@@ -165,7 +193,13 @@ export async function initProductDetail() {
       loadingElement.style.display = 'none';
     }
     
-    container.innerHTML = '<p class="error-message">Error loading product. Please try again later.</p>';
+    container.innerHTML = `
+      <div class="error-message">
+        <p>⚠️ Error loading product. Please try again later.</p>
+        <p class="error-details">${error.message}</p>
+        <button onclick="window.location.reload()" class="btn btn-primary">Retry</button>
+      </div>
+    `;
   }
 }
 

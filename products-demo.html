@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products Demo - SleepOutside</title>
+  <link rel="stylesheet" href="src/css/base.css">
+  <link rel="stylesheet" href="src/css/site.css">
+</head>
+<body>
+  <header id="main-header"></header>
+
+  <main>
+    <div class="product-list-container">
+      <div class="product-list-header">
+        <h1>Demo Products (Hardcoded)</h1>
+        <p class="results-count">4 products found</p>
+      </div>
+
+      <div id="product-list" class="product-grid">
+        <!-- Products will be rendered here -->
+      </div>
+    </div>
+  </main>
+
+  <footer id="main-footer"></footer>
+  <div id="alert-container" class="alert-container"></div>
+
+  <script type="module">
+    import { addToCart } from './src/js/cart.js';
+    import { formatCurrency } from './src/js/utils.js';
+
+    // Demo products
+    const demoProducts = [
+      {
+        Id: "880RR",
+        Name: "Marmot Ajax 3 Tent",
+        Category: "Tents",
+        SuggestedRetailPrice: 349.99,
+        FinalPrice: 279.99,
+        Images: {
+          PrimaryMedium: "https://placehold.co/400x300/2c5f2d/ffffff?text=Marmot+Ajax+3"
+        }
+      },
+      {
+        Id: "989CG",
+        Name: "The North Face Talus 4 Tent",
+        Category: "Tents",
+        SuggestedRetailPrice: 449.99,
+        FinalPrice: 449.99,
+        Images: {
+          PrimaryMedium: "https://placehold.co/400x300/4a7c59/ffffff?text=Talus+4"
+        }
+      },
+      {
+        Id: "344YJ",
+        Name: "Cedar Ridge Rimrock 2 Person Tent",
+        Category: "Tents",
+        SuggestedRetailPrice: 199.99,
+        FinalPrice: 149.99,
+        Images: {
+          PrimaryMedium: "https://placehold.co/400x300/6b8e23/ffffff?text=Rimrock+2"
+        }
+      },
+      {
+        Id: "750ZY",
+        Name: "Kelty Galactic 6 Person Tent",
+        Category: "Tents",
+        SuggestedRetailPrice: 599.99,
+        FinalPrice: 499.99,
+        Images: {
+          PrimaryMedium: "https://placehold.co/400x300/97c05c/ffffff?text=Galactic+6"
+        }
+      }
+    ];
+
+    function renderProducts() {
+      const container = document.getElementById('product-list');
+      
+      demoProducts.forEach(product => {
+        const hasDiscount = product.FinalPrice < product.SuggestedRetailPrice;
+        const discount = hasDiscount ? Math.round(((product.SuggestedRetailPrice - product.FinalPrice) / product.SuggestedRetailPrice) * 100) : 0;
+        
+        const card = document.createElement('article');
+        card.className = 'product-card';
+        
+        card.innerHTML = `
+          <a href="/product.html?id=${product.Id}" class="product-link">
+            ${hasDiscount ? `<span class="badge badge-discount">-${discount}%</span>` : ''}
+            <div class="product-image">
+              <img 
+                src="${product.Images.PrimaryMedium}" 
+                alt="${product.Name}"
+                loading="lazy"
+              />
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">${product.Name}</h3>
+              <p class="product-category">${product.Category}</p>
+              <div class="product-pricing">
+                ${hasDiscount ? `<span class="product-price-original">${formatCurrency(product.SuggestedRetailPrice)}</span>` : ''}
+                <span class="product-price ${hasDiscount ? 'product-price-discounted' : ''}">${formatCurrency(product.FinalPrice)}</span>
+              </div>
+            </div>
+          </a>
+          <button class="btn btn-primary add-to-cart-btn" data-product-id="${product.Id}">
+            Add to Cart
+          </button>
+        `;
+        
+        const btn = card.querySelector('.add-to-cart-btn');
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          addToCart(product, 1);
+          
+          btn.textContent = '✓ Added!';
+          btn.disabled = true;
+          
+          setTimeout(() => {
+            btn.textContent = 'Add to Cart';
+            btn.disabled = false;
+          }, 1500);
+        });
+        
+        container.appendChild(card);
+      });
+    }
+
+    // Initialize
+    renderProducts();
+  </script>
+
+  <script type="module" src="src/js/header.js"></script>
+  <script type="module" src="src/js/footer.js"></script>
+</body>
+</html>

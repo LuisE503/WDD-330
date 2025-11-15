@@ -3,6 +3,7 @@
  */
 
 import { apiRequest, formatCurrency, getFinalPrice, isDiscounted, discountPercent, getResponsiveImage, createSrcSet, getParam } from './utils.js';
+import { addToCart } from './cart.js';
 
 /**
  * Fetch products by category
@@ -79,32 +80,77 @@ function renderProductCard(product) {
   const hasDiscount = isDiscounted(product);
   const discount = hasDiscount ? discountPercent(product) : 0;
   
-  // Get responsive image
-  const imageSrc = product.images ? getResponsiveImage(product.images) : (product.image ?? '');
-  const srcset = product.images ? createSrcSet(product.images) : '';
+  // Get image - handle different API response formats
+  let imageSrc = '';
+  let srcset = '';
+  
+  if (product.Images) {
+    // API returns Images with capital I
+    imageSrc = getResponsiveImage(product.Images);
+    srcset = createSrcSet(product.Images);
+  } else if (product.images) {
+    imageSrc = getResponsiveImage(product.images);
+    srcset = createSrcSet(product.images);
+  } else if (product.Image) {
+    imageSrc = product.Image;
+  } else if (product.image) {
+    imageSrc = product.image;
+  }
+  
+  // Fallback to placeholder if no image
+  if (!imageSrc) {
+    imageSrc = `https://placehold.co/400x300/2c5f2d/ffffff?text=${encodeURIComponent(product.Name || product.name || 'Product')}`;
+  }
+  
+  // Get product name - handle different API formats
+  const productName = product.Name || product.name || 'Unknown Product';
+  const productId = product.Id || product.id;
+  const category = product.Category || product.category;
   
   card.innerHTML = `
-    <a href="/product.html?id=${product.id}" class="product-link">
+    <a href="/product.html?id=${productId}" class="product-link">
       ${hasDiscount ? `<span class="badge badge-discount">-${discount}%</span>` : ''}
       <div class="product-image">
         <img 
           src="${imageSrc}" 
           ${srcset ? `srcset="${srcset}"` : ''}
           ${srcset ? `sizes="(max-width: 480px) 480px, (max-width: 1024px) 1024px, 1920px"` : ''}
-          alt="${product.name ?? 'Product'}"
+          alt="${productName}"
           loading="lazy"
+          onerror="this.src='https://placehold.co/400x300/2c5f2d/ffffff?text=No+Image'"
         />
       </div>
       <div class="product-info">
-        <h3 class="product-name">${product.name ?? 'Unknown Product'}</h3>
-        ${product.category ? `<p class="product-category">${product.category}</p>` : ''}
+        <h3 class="product-name">${productName}</h3>
+        ${category ? `<p class="product-category">${category}</p>` : ''}
         <div class="product-pricing">
-          ${hasDiscount ? `<span class="product-price-original">${formatCurrency(product.price)}</span>` : ''}
-          <span class="product-price">${formatCurrency(finalPrice)}</span>
+          ${hasDiscount ? `<span class="product-price-original">${formatCurrency(product.SuggestedRetailPrice || product.price)}</span>` : ''}
+          <span class="product-price ${hasDiscount ? 'product-price-discounted' : ''}">${formatCurrency(finalPrice)}</span>
         </div>
       </div>
     </a>
+    <button class="btn btn-primary add-to-cart-btn" data-product-id="${productId}">
+      Add to Cart
+    </button>
   `;
+  
+  // Add event listener to the button
+  const addToCartBtn = card.querySelector('.add-to-cart-btn');
+  addToCartBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(product, 1);
+    
+    // Visual feedback
+    const originalText = addToCartBtn.textContent;
+    addToCartBtn.textContent = '✓ Added!';
+    addToCartBtn.disabled = true;
+    
+    setTimeout(() => {
+      addToCartBtn.textContent = originalText;
+      addToCartBtn.disabled = false;
+    }, 1500);
+  });
   
   return card;
 }
@@ -143,6 +189,7 @@ export async function initProductList() {
   const sortSelect = document.getElementById('sort-select');
   const loadingElement = document.getElementById('loading');
   const resultsCount = document.getElementById('results-count');
+  const pageTitle = document.getElementById('page-title');
   
   if (!container) {
     console.warn('Product list container not found');
@@ -158,14 +205,33 @@ export async function initProductList() {
   const category = getParam('category');
   const searchTerm = getParam('search');
   
+  // Update page title
+  if (pageTitle) {
+    if (category) {
+      pageTitle.textContent = category;
+    } else if (searchTerm) {
+      pageTitle.textContent = `Search Results for "${searchTerm}"`;
+    } else {
+      pageTitle.textContent = 'All Products';
+    }
+  }
+  
   let products = [];
   
   try {
     if (category) {
+      console.log('Fetching products for category:', category);
       products = await fetchProductsByCategory(category);
     } else if (searchTerm) {
+      console.log('Searching products for term:', searchTerm);
       products = await fetchProductsBySearch(searchTerm);
+    } else {
+      // Default to showing tents if no parameters
+      console.log('No category or search term, showing default products');
+      products = await fetchProductsByCategory('tents');
     }
+    
+    console.log('Products loaded:', products.length, products);
     
     // Hide loading
     if (loadingElement) {
@@ -174,7 +240,8 @@ export async function initProductList() {
     
     // Update results count
     if (resultsCount) {
-      resultsCount.textContent = `${products.length} ${products.length === 1 ? 'product' : 'products'} found`;
+      const count = products.length;
+      resultsCount.textContent = `${count} ${count === 1 ? 'product' : 'products'} found`;
     }
     
     // Render products
@@ -192,7 +259,13 @@ export async function initProductList() {
     if (loadingElement) {
       loadingElement.style.display = 'none';
     }
-    container.innerHTML = '<p class="error-message">Error loading products. Please try again later.</p>';
+    container.innerHTML = `
+      <div class="error-message">
+        <p>⚠️ Error loading products. Please try again later.</p>
+        <p class="error-details">${error.message}</p>
+        <button onclick="window.location.reload()" class="btn btn-primary">Retry</button>
+      </div>
+    `;
   }
 }
 

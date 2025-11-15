@@ -40,20 +40,49 @@ export function setCart(cart) {
  * @param {number} qty - Quantity to add (default 1)
  */
 export function addToCart(item, qty = 1) {
-  if (!item || !item.id) {
+  if (!item) {
     console.error('Invalid item:', item);
     return;
   }
   
+  // Handle different ID field names from API
+  const itemId = item.Id || item.id;
+  if (!itemId) {
+    console.error('Item has no ID:', item);
+    return;
+  }
+  
   const cart = getCart();
-  const existingItem = cart.find(cartItem => cartItem.id === item.id);
+  const existingItem = cart.find(cartItem => {
+    const cartItemId = cartItem.Id || cartItem.id;
+    return cartItemId === itemId;
+  });
   
   if (existingItem) {
     // Item already in cart - increment quantity
     existingItem.quantity = (existingItem.quantity || 1) + qty;
+    console.log(`Updated quantity for ${item.Name || item.name} to ${existingItem.quantity}`);
   } else {
-    // New item - add to cart with quantity
-    cart.push({ ...item, quantity: qty });
+    // New item - normalize the item structure
+    const normalizedItem = {
+      id: itemId,
+      Id: itemId,
+      name: item.Name || item.name,
+      Name: item.Name || item.name,
+      price: item.SuggestedRetailPrice || item.price,
+      SuggestedRetailPrice: item.SuggestedRetailPrice || item.price,
+      finalPrice: item.FinalPrice || item.finalPrice,
+      FinalPrice: item.FinalPrice || item.finalPrice,
+      category: item.Category || item.category,
+      Category: item.Category || item.category,
+      images: item.Images || item.images,
+      Images: item.Images || item.images,
+      image: item.Image || item.image,
+      Image: item.Image || item.image,
+      quantity: qty
+    };
+    cart.push(normalizedItem);
+    console.log(`Added ${normalizedItem.name} to cart with quantity ${qty}`);
   }
   
   setCart(cart);
@@ -139,36 +168,58 @@ export function renderCartTotal() {
 function renderCartItem(item) {
   const li = document.createElement('li');
   li.className = 'cart-item';
-  li.setAttribute('data-id', item.id);
+  li.setAttribute('data-id', item.id || item.Id);
   
   const price = getFinalPrice(item);
   const quantity = item.quantity ?? 1;
   const itemTotal = price * quantity;
   
-  // Get responsive image
-  const imageSrc = item.images ? getResponsiveImage(item.images) : (item.image ?? '');
+  // Get image - handle different API response formats
+  let imageSrc = '';
+  if (item.Images) {
+    imageSrc = getResponsiveImage(item.Images);
+  } else if (item.images) {
+    imageSrc = getResponsiveImage(item.images);
+  } else if (item.Image) {
+    imageSrc = item.Image;
+  } else if (item.image) {
+    imageSrc = item.image;
+  }
+  
+  // Fallback to placeholder
+  if (!imageSrc) {
+    const productName = item.Name || item.name || 'Product';
+    imageSrc = `https://placehold.co/120x120/2c5f2d/ffffff?text=${encodeURIComponent(productName)}`;
+  }
+  
+  const productName = item.Name || item.name || 'Unknown Product';
+  const productId = item.Id || item.id;
   
   li.innerHTML = `
     <div class="cart-item-image">
-      <img src="${imageSrc}" alt="${item.name ?? 'Product'}" />
+      <img 
+        src="${imageSrc}" 
+        alt="${productName}"
+        onerror="this.src='https://placehold.co/120x120/2c5f2d/ffffff?text=No+Image'"
+      />
     </div>
     <div class="cart-item-details">
-      <h3 class="cart-item-name">${item.name ?? 'Unknown Product'}</h3>
+      <h3 class="cart-item-name">${productName}</h3>
       <p class="cart-item-price">${formatCurrency(price)}</p>
-      ${isDiscounted(item) ? `<span class="badge badge-discount">-${discountPercent(item)}%</span>` : ''}
+      ${isDiscounted(item) ? `<span class="badge badge-discount-inline">-${discountPercent(item)}%</span>` : ''}
       <div class="cart-item-quantity">
-        <label for="qty-${item.id}">Quantity:</label>
+        <label for="qty-${productId}">Quantity:</label>
         <input type="number" 
-               id="qty-${item.id}" 
+               id="qty-${productId}" 
                class="quantity-input" 
                value="${quantity}" 
                min="1" 
-               data-id="${item.id}"
-               aria-label="Quantity for ${item.name ?? 'item'}">
+               data-id="${productId}"
+               aria-label="Quantity for ${productName}">
       </div>
       <p class="cart-item-total">Subtotal: ${formatCurrency(itemTotal)}</p>
     </div>
-    <button class="cart-remove" data-id="${item.id}" aria-label="Remove ${item.name ?? 'item'} from cart">
+    <button class="cart-remove" data-id="${productId}" aria-label="Remove ${productName} from cart">
       <span aria-hidden="true">×</span>
     </button>
   `;
@@ -286,44 +337,3 @@ if (document.readyState === 'loading') {
   }
 }
 
- * Remove item from cart by ID
- * @param {string} itemId - Product ID to remove
- */
-export function removeFromCart(itemId) {
-  let cart = getCart();
-  cart = cart.filter(item => item.id !== itemId);
-  setCart(cart);
-  
-  // Re-render cart UI
-  renderCartItems();
-  
-  // Update header badge if function is available
-  if (window.renderCartCount) {
-    window.renderCartCount();
-  }
-}
-
-/**
- * Add item to cart (or update quantity if exists)
- * @param {Object} product - Product to add
- */
-export function addToCart(product) {
-  const cart = getCart();
-  const existingItem = cart.find(item => item.id === product.id);
-  
-  if (existingItem) {
-    existingItem.quantity = (existingItem.quantity ?? 1) + 1;
-  } else {
-    cart.push({
-      ...product,
-      quantity: 1
-    });
-  }
-  
-  setCart(cart);
-  
-  // Update header badge if function is available
-  if (window.renderCartCount) {
-    window.renderCartCount();
-  }
-}
