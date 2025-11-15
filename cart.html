@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart - SleepOutside</title>
+  <link rel="stylesheet" href="src/css/base.css">
+  <link rel="stylesheet" href="src/css/cart.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <a href="index.html" class="logo">SleepOutside</a>
+        <a href="cart.html" class="cart-link">
+          <svg class="icon-backpack" aria-label="Cart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M17 6h-2V3c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v3H7c-1.1 0-2 .9-2 2v13c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 3h4v3h-4V3zm7 18H7V8h10v13z"/>
+            <path d="M9 10h6v2H9z"/>
+          </svg>
+          <span id="cart-count" class="badge hide" aria-label="Items in cart"></span>
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="cart-container">
+    <h1>Your Shopping Cart</h1>
+    
+    <div id="cart-empty" class="cart-empty hide">
+      Your cart is empty.
+    </div>
+    
+    <ul id="cart-items" class="cart-items">
+      <!-- Cart items will be rendered here -->
+    </ul>
+    
+    <div class="cart-footer hide" id="cart-footer">
+      <p class="cart-total">Total: <span id="cart-total-amount"></span></p>
+    </div>
+  </main>
+
+  <script type="module">
+    import { renderCartItems } from './src/js/cart.js';
+    import { renderCartCount } from './src/js/header.js';
+
+    // Initialize cart page
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCartCount();
+      renderCartItems();
+    });
+  </script>
+</body>
+</html>
