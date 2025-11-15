@@ -2,7 +2,7 @@
  * Products module - fetch and render product listings
  */
 
-import { apiRequest, formatCurrency, getFinalPrice, isDiscounted, discountPercent, getResponsiveImage, createSrcSet, getParam } from './utils.js';
+import { apiRequest, formatCurrency, getFinalPrice, isDiscounted, discountPercent, getResponsiveImage, createSrcSet, getParam, resolvePath } from './utils.js';
 import { addToCart } from './cart.js';
 
 /**
@@ -151,7 +151,7 @@ function renderProductCard(product) {
   const category = product.Category || product.category;
   
   card.innerHTML = `
-    <a href="product.html?id=${productId}" class="product-link">
+    <a href="${resolvePath(`product.html?id=${productId}`)}" class="product-link">
       ${hasDiscount ? `<span class="badge badge-discount">-${discount}%</span>` : ''}
       <div class="product-image">
         <img 

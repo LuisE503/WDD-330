@@ -86,6 +86,17 @@
   <script type="module" src="src/js/header.js"></script>
   <script type="module" src="src/js/footer.js"></script>
   <script type="module">
+    // Fix category links for GitHub Pages
+    import { resolvePath } from './src/js/utils.js';
+    
+    // Update all category links
+    document.querySelectorAll('.category-card a').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('http')) {
+        link.setAttribute('href', resolvePath(href));
+      }
+    });
+    
     // Load featured products on home page
     import { fetchProductsByCategory } from './src/js/products.js';
     import { addToCart } from './src/js/cart.js';
@@ -187,7 +198,7 @@
       }
       
       card.innerHTML = `
-        <a href="product.html?id=${productId}" class="product-link">
+        <a href="${resolvePath(`product.html?id=${productId}`)}" class="product-link">
           ${hasDiscount ? `<span class="badge badge-discount">-${discount}%</span>` : ''}
           <div class="product-image">
             <img 

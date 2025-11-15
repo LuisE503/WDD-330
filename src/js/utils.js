@@ -3,6 +3,43 @@
  */
 
 /**
+ * Get the base path for the application
+ * Works both locally and on GitHub Pages
+ * @returns {string} Base path
+ */
+export function getBasePath() {
+  const path = window.location.pathname;
+  
+  // Check if we're on GitHub Pages (path includes /WDD-330/)
+  if (path.includes('/WDD-330/')) {
+    return '/WDD-330/';
+  }
+  
+  // Local development or root deployment
+  return '/';
+}
+
+/**
+ * Resolve a path relative to the base path
+ * @param {string} relativePath - Path like 'index.html' or 'product-list.html?category=Tents'
+ * @returns {string} Full path
+ */
+export function resolvePath(relativePath) {
+  const base = getBasePath();
+  
+  // Remove leading slash if present
+  const cleanPath = relativePath.startsWith('/') ? relativePath.substring(1) : relativePath;
+  
+  // For local (base = '/'), just return the path
+  if (base === '/') {
+    return cleanPath;
+  }
+  
+  // For GitHub Pages, combine base + path
+  return base + cleanPath;
+}
+
+/**
  * Format price as USD currency
  * @param {number} amount - Price to format
  * @returns {string} Formatted currency string

@@ -2,7 +2,7 @@
  * Breadcrumbs module - dynamic breadcrumb navigation
  */
 
-import { getParam } from './utils.js';
+import { getParam, resolvePath } from './utils.js';
 
 /**
  * Generate breadcrumb items based on current page context
@@ -14,7 +14,7 @@ function getBreadcrumbItems() {
   
   // Always start with Home (except on home page)
   if (!path.endsWith('index.html') && path !== '/') {
-    breadcrumbs.push({ label: 'Home', url: 'index.html' });
+    breadcrumbs.push({ label: 'Home', url: resolvePath('index.html') });
   }
   
   // Product list page
@@ -88,13 +88,13 @@ export function updateProductBreadcrumb(productName, category) {
   if (!breadcrumbNav) return;
   
   const breadcrumbs = [
-    { label: 'Home', url: 'index.html' }
+    { label: 'Home', url: resolvePath('index.html') }
   ];
   
   if (category) {
     breadcrumbs.push({ 
       label: category, 
-      url: `product-list.html?category=${encodeURIComponent(category)}` 
+      url: resolvePath(`product-list.html?category=${encodeURIComponent(category)}`) 
     });
   }
   
