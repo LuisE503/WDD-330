@@ -63,6 +63,17 @@
         </article>
       </div>
     </section>
+
+    <!-- Featured Products Section -->
+    <section class="featured-products">
+      <h2>Featured Products</h2>
+      <div id="loading-featured" class="loading" style="display: none;">
+        <p>Loading products...</p>
+      </div>
+      <div id="featured-products" class="product-grid">
+        <!-- Products will be loaded here -->
+      </div>
+    </section>
   </main>
 
   <footer id="main-footer">
@@ -74,5 +85,152 @@
 
   <script type="module" src="src/js/header.js"></script>
   <script type="module" src="src/js/footer.js"></script>
+  <script type="module">
+    // Load featured products on home page
+    import { fetchProductsByCategory } from './src/js/products.js';
+    import { addToCart } from './src/js/cart.js';
+    import { formatCurrency, getFinalPrice, isDiscounted, discountPercent } from './src/js/utils.js';
+
+    async function loadFeaturedProducts() {
+      const container = document.getElementById('featured-products');
+      const loading = document.getElementById('loading-featured');
+      
+      if (!container) return;
+      
+      try {
+        loading.style.display = 'block';
+        
+        // Fetch tents as featured products (or mix from different categories)
+        let products = await fetchProductsByCategory('tents');
+        
+        // If API fails, use fallback products
+        if (!products || products.length === 0) {
+          products = getFallbackProducts();
+        }
+        
+        loading.style.display = 'none';
+        
+        // Show only first 4 products
+        products.slice(0, 4).forEach(product => {
+          const card = createProductCard(product);
+          container.appendChild(card);
+        });
+        
+      } catch (error) {
+        console.error('Error loading featured products:', error);
+        loading.style.display = 'none';
+        
+        // Load fallback products
+        const fallbackProducts = getFallbackProducts();
+        fallbackProducts.forEach(product => {
+          const card = createProductCard(product);
+          container.appendChild(card);
+        });
+      }
+    }
+
+    function getFallbackProducts() {
+      return [
+        {
+          Id: "880RR",
+          Name: "Marmot Ajax 3 Tent",
+          Category: "Tents",
+          SuggestedRetailPrice: 349.99,
+          FinalPrice: 279.99,
+          Images: { PrimaryMedium: "https://placehold.co/400x300/2c5f2d/ffffff?text=Marmot+Ajax+3" }
+        },
+        {
+          Id: "989CG",
+          Name: "The North Face Talus 4",
+          Category: "Tents",
+          SuggestedRetailPrice: 449.99,
+          Images: { PrimaryMedium: "https://placehold.co/400x300/4a7c59/ffffff?text=Talus+4" }
+        },
+        {
+          Id: "344YJ",
+          Name: "Cedar Ridge Rimrock 2",
+          Category: "Tents",
+          SuggestedRetailPrice: 199.99,
+          FinalPrice: 149.99,
+          Images: { PrimaryMedium: "https://placehold.co/400x300/6b8e23/ffffff?text=Rimrock+2" }
+        },
+        {
+          Id: "750ZY",
+          Name: "Kelty Galactic 6",
+          Category: "Tents",
+          SuggestedRetailPrice: 599.99,
+          FinalPrice: 499.99,
+          Images: { PrimaryMedium: "https://placehold.co/400x300/97c05c/ffffff?text=Galactic+6" }
+        }
+      ];
+    }
+
+    function createProductCard(product) {
+      const card = document.createElement('article');
+      card.className = 'product-card';
+      
+      const finalPrice = getFinalPrice(product);
+      const hasDiscount = isDiscounted(product);
+      const discount = hasDiscount ? discountPercent(product) : 0;
+      
+      const productName = product.Name || product.name || 'Product';
+      const productId = product.Id || product.id;
+      const category = product.Category || product.category;
+      
+      let imageSrc = '';
+      if (product.Images?.PrimaryMedium) {
+        imageSrc = product.Images.PrimaryMedium;
+      } else if (product.images?.PrimaryMedium) {
+        imageSrc = product.images.PrimaryMedium;
+      } else {
+        imageSrc = `https://placehold.co/400x300/2c5f2d/ffffff?text=${encodeURIComponent(productName)}`;
+      }
+      
+      card.innerHTML = `
+        <a href="product.html?id=${productId}" class="product-link">
+          ${hasDiscount ? `<span class="badge badge-discount">-${discount}%</span>` : ''}
+          <div class="product-image">
+            <img 
+              src="${imageSrc}" 
+              alt="${productName}"
+              loading="lazy"
+              onerror="this.src='https://placehold.co/400x300/2c5f2d/ffffff?text=No+Image'"
+            />
+          </div>
+          <div class="product-info">
+            <h3 class="product-name">${productName}</h3>
+            ${category ? `<p class="product-category">${category}</p>` : ''}
+            <div class="product-pricing">
+              ${hasDiscount ? `<span class="product-price-original">${formatCurrency(product.SuggestedRetailPrice || product.price)}</span>` : ''}
+              <span class="product-price ${hasDiscount ? 'product-price-discounted' : ''}">${formatCurrency(finalPrice)}</span>
+            </div>
+          </div>
+        </a>
+        <button class="btn btn-primary add-to-cart-btn" data-product-id="${productId}">
+          Add to Cart
+        </button>
+      `;
+      
+      const btn = card.querySelector('.add-to-cart-btn');
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        addToCart(product, 1);
+        
+        btn.textContent = '✓ Added!';
+        btn.disabled = true;
+        
+        setTimeout(() => {
+          btn.textContent = 'Add to Cart';
+          btn.disabled = false;
+        }, 1500);
+      });
+      
+      return card;
+    }
+
+    // Load products when page loads
+    loadFeaturedProducts();
+  </script>
 </body>
 </html>

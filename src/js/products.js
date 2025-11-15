@@ -6,6 +6,36 @@ import { apiRequest, formatCurrency, getFinalPrice, isDiscounted, discountPercen
 import { addToCart } from './cart.js';
 
 /**
+ * Fallback products by category (used when API fails)
+ */
+const FALLBACK_PRODUCTS = {
+  'tents': [
+    { Id: "880RR", Name: "Marmot Ajax 3 Tent", Category: "Tents", SuggestedRetailPrice: 349.99, FinalPrice: 279.99, Images: { PrimaryMedium: "https://placehold.co/400x300/2c5f2d/ffffff?text=Marmot+Ajax+3" } },
+    { Id: "989CG", Name: "The North Face Talus 4", Category: "Tents", SuggestedRetailPrice: 449.99, Images: { PrimaryMedium: "https://placehold.co/400x300/4a7c59/ffffff?text=Talus+4" } },
+    { Id: "344YJ", Name: "Cedar Ridge Rimrock 2", Category: "Tents", SuggestedRetailPrice: 199.99, FinalPrice: 149.99, Images: { PrimaryMedium: "https://placehold.co/400x300/6b8e23/ffffff?text=Rimrock+2" } },
+    { Id: "750ZY", Name: "Kelty Galactic 6", Category: "Tents", SuggestedRetailPrice: 599.99, FinalPrice: 499.99, Images: { PrimaryMedium: "https://placehold.co/400x300/97c05c/ffffff?text=Galactic+6" } }
+  ],
+  'backpacks': [
+    { Id: "BP100", Name: "Mountain Explorer 50L", Category: "Backpacks", SuggestedRetailPrice: 179.99, FinalPrice: 149.99, Images: { PrimaryMedium: "https://placehold.co/400x300/2c5f2d/ffffff?text=Explorer+50L" } },
+    { Id: "BP200", Name: "Summit Trekker 65L", Category: "Backpacks", SuggestedRetailPrice: 229.99, Images: { PrimaryMedium: "https://placehold.co/400x300/4a7c59/ffffff?text=Trekker+65L" } },
+    { Id: "BP300", Name: "Urban Commuter 30L", Category: "Backpacks", SuggestedRetailPrice: 89.99, FinalPrice: 69.99, Images: { PrimaryMedium: "https://placehold.co/400x300/6b8e23/ffffff?text=Commuter+30L" } },
+    { Id: "BP400", Name: "Alpine Pro 80L", Category: "Backpacks", SuggestedRetailPrice: 299.99, FinalPrice: 249.99, Images: { PrimaryMedium: "https://placehold.co/400x300/97c05c/ffffff?text=Alpine+80L" } }
+  ],
+  'sleeping bags': [
+    { Id: "SB100", Name: "Winter Warmer -20°F", Category: "Sleeping Bags", SuggestedRetailPrice: 189.99, FinalPrice: 159.99, Images: { PrimaryMedium: "https://placehold.co/400x300/2c5f2d/ffffff?text=Winter+Warmer" } },
+    { Id: "SB200", Name: "Three Season 20°F", Category: "Sleeping Bags", SuggestedRetailPrice: 129.99, Images: { PrimaryMedium: "https://placehold.co/400x300/4a7c59/ffffff?text=Three+Season" } },
+    { Id: "SB300", Name: "Ultralight Summer 40°F", Category: "Sleeping Bags", SuggestedRetailPrice: 79.99, FinalPrice: 59.99, Images: { PrimaryMedium: "https://placehold.co/400x300/6b8e23/ffffff?text=Ultralight" } },
+    { Id: "SB400", Name: "Family Car Camping", Category: "Sleeping Bags", SuggestedRetailPrice: 59.99, Images: { PrimaryMedium: "https://placehold.co/400x300/97c05c/ffffff?text=Car+Camping" } }
+  ],
+  'hammocks': [
+    { Id: "HM100", Name: "Double Paradise Hammock", Category: "Hammocks", SuggestedRetailPrice: 79.99, FinalPrice: 59.99, Images: { PrimaryMedium: "https://placehold.co/400x300/2c5f2d/ffffff?text=Paradise+Double" } },
+    { Id: "HM200", Name: "Camping Hammock with Net", Category: "Hammocks", SuggestedRetailPrice: 99.99, Images: { PrimaryMedium: "https://placehold.co/400x300/4a7c59/ffffff?text=With+Net" } },
+    { Id: "HM300", Name: "Ultralight Solo", Category: "Hammocks", SuggestedRetailPrice: 49.99, FinalPrice: 39.99, Images: { PrimaryMedium: "https://placehold.co/400x300/6b8e23/ffffff?text=Ultralight+Solo" } },
+    { Id: "HM400", Name: "Quilted Comfort XL", Category: "Hammocks", SuggestedRetailPrice: 119.99, FinalPrice: 89.99, Images: { PrimaryMedium: "https://placehold.co/400x300/97c05c/ffffff?text=Quilted+XL" } }
+  ]
+};
+
+/**
  * Fetch products by category
  * @param {string} category - Category name
  * @returns {Promise<Array>} Array of products
@@ -15,10 +45,23 @@ export async function fetchProductsByCategory(category) {
     // API returns products for specific category
     const endpoint = `/products/search/${encodeURIComponent(category)}`;
     const data = await apiRequest(endpoint);
-    return Array.isArray(data) ? data : [];
+    
+    // If API returns data, use it
+    if (Array.isArray(data) && data.length > 0) {
+      return data;
+    }
+    
+    // Otherwise, use fallback products
+    console.warn(`No products from API for "${category}", using fallback data`);
+    const categoryKey = category.toLowerCase();
+    return FALLBACK_PRODUCTS[categoryKey] || [];
+    
   } catch (error) {
     console.error('Error fetching products by category:', error);
-    return [];
+    
+    // Use fallback products on error
+    const categoryKey = category.toLowerCase();
+    return FALLBACK_PRODUCTS[categoryKey] || [];
   }
 }
 
@@ -108,7 +151,7 @@ function renderProductCard(product) {
   const category = product.Category || product.category;
   
   card.innerHTML = `
-    <a href="/product.html?id=${productId}" class="product-link">
+    <a href="product.html?id=${productId}" class="product-link">
       ${hasDiscount ? `<span class="badge badge-discount">-${discount}%</span>` : ''}
       <div class="product-image">
         <img 

@@ -14,18 +14,18 @@ function getHeaderHTML() {
   return `
     <div class="header-container">
       <div class="logo">
-        <a href="/index.html">
+        <a href="index.html">
           <span class="logo-text">Sleep<span class="logo-accent">Outside</span></span>
         </a>
       </div>
       
       <nav class="main-nav" aria-label="Main navigation">
         <ul>
-          <li><a href="/index.html">Home</a></li>
-          <li><a href="/product-list.html?category=Tents">Tents</a></li>
-          <li><a href="/product-list.html?category=Backpacks">Backpacks</a></li>
-          <li><a href="/product-list.html?category=Sleeping%20Bags">Sleeping Bags</a></li>
-          <li><a href="/product-list.html?category=Hammocks">Hammocks</a></li>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="product-list.html?category=Tents">Tents</a></li>
+          <li><a href="product-list.html?category=Backpacks">Backpacks</a></li>
+          <li><a href="product-list.html?category=Sleeping%20Bags">Sleeping Bags</a></li>
+          <li><a href="product-list.html?category=Hammocks">Hammocks</a></li>
         </ul>
       </nav>
       
@@ -46,7 +46,7 @@ function getHeaderHTML() {
           </button>
         </form>
         
-        <a href="/cart.html" class="cart-link" aria-label="Shopping cart with ${cartCount} items">
+        <a href="cart.html" class="cart-link" aria-label="Shopping cart with ${cartCount} items">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <circle cx="9" cy="21" r="1"/>
             <circle cx="20" cy="21" r="1"/>
@@ -112,7 +112,7 @@ function handleSearchSubmit(e) {
   
   if (searchTerm) {
     // Navigate to product list with search query
-    window.location.href = `/product-list.html?search=${encodeURIComponent(searchTerm)}`;
+    window.location.href = `product-list.html?search=${encodeURIComponent(searchTerm)}`;
   }
 }
 

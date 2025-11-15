@@ -366,6 +366,26 @@
   color: var(--text-light);
 }
 
+/* ===== FEATURED PRODUCTS SECTION ===== */
+.featured-products {
+  max-width: var(--max-width);
+  margin: var(--spacing-xxl) auto;
+  padding: 0 var(--spacing-md) var(--spacing-xxl);
+}
+
+.featured-products h2 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-xl);
+  font-size: 2rem;
+}
+
+.featured-products .loading {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-light);
+}
+
 /* ===== PRODUCT LIST ===== */
 .product-list-container {
   max-width: var(--max-width);
