@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products - SleepOutside</title>
+  <meta name="description" content="Browse our selection of quality outdoor gear.">
+  <link rel="stylesheet" href="src/css/base.css">
+  <link rel="stylesheet" href="src/css/site.css">
+</head>
+<body>
+  <header id="main-header">
+    <!-- Header injected by header.js -->
+  </header>
+
+  <div id="breadcrumb-container">
+    <!-- Breadcrumbs injected by breadcrumbs.js -->
+  </div>
+
+  <main>
+    <div class="product-list-container">
+      <div class="product-list-header">
+        <h1 id="page-title">Products</h1>
+        <p id="results-count" class="results-count"></p>
+      </div>
+
+      <div class="product-list-controls">
+        <label for="sort-select">Sort by:</label>
+        <select id="sort-select" aria-label="Sort products">
+          <option value="">Default</option>
+          <option value="name-asc">Name (A-Z)</option>
+          <option value="name-desc">Name (Z-A)</option>
+          <option value="price-asc">Price (Low to High)</option>
+          <option value="price-desc">Price (High to Low)</option>
+        </select>
+      </div>
+
+      <div id="loading" class="loading" style="display: none;">
+        <p>Loading products...</p>
+      </div>
+
+      <div id="product-list" class="product-grid">
+        <!-- Products will be rendered here -->
+      </div>
+    </div>
+  </main>
+
+  <footer id="main-footer">
+    <!-- Footer injected by footer.js -->
+  </footer>
+
+  <!-- Alert container for notifications -->
+  <div id="alert-container" class="alert-container"></div>
+
+  <script type="module" src="src/js/header.js"></script>
+  <script type="module" src="src/js/footer.js"></script>
+  <script type="module" src="src/js/breadcrumbs.js"></script>
+  <script type="module" src="src/js/products.js"></script>
+</body>
+</html>

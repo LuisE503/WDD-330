@@ -3,51 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Listing - SleepOutside</title>
+  <title>SleepOutside - Quality Outdoor Gear</title>
+  <meta name="description" content="Shop quality outdoor gear including tents, backpacks, sleeping bags, and hammocks.">
   <link rel="stylesheet" href="src/css/base.css">
-  <link rel="stylesheet" href="src/css/cart.css">
+  <link rel="stylesheet" href="src/css/site.css">
 </head>
 <body>
-  <header>
-    <nav>
-      <div class="nav-container">
-        <a href="index.html" class="logo">SleepOutside</a>
-        <a href="cart.html" class="cart-link">
-          <svg class="icon-backpack" aria-label="Cart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M17 6h-2V3c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v3H7c-1.1 0-2 .9-2 2v13c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 3h4v3h-4V3zm7 18H7V8h10v13z"/>
-            <path d="M9 10h6v2H9z"/>
-          </svg>
-          <span id="cart-count" class="badge hide" aria-label="Items in cart"></span>
-        </a>
-      </div>
-    </nav>
+  <header id="main-header">
+    <!-- Header injected by header.js -->
   </header>
 
   <main>
-    <div class="cart-container">
-      <h1>Our Products</h1>
-      <ul id="product-list" class="product-list">
-        <!-- Products will be rendered here -->
-      </ul>
-    </div>
+    <section class="hero">
+      <h1>Welcome to SleepOutside</h1>
+      <p>Your trusted source for quality outdoor gear and equipment</p>
+    </section>
+
+    <section class="categories">
+      <h2>Shop by Category</h2>
+      <div class="category-grid">
+        <article class="category-card">
+          <a href="product-list.html?category=Tents">
+            <div class="category-image">
+              <img src="/images/categories/tents.jpg" alt="Tents" loading="lazy">
+            </div>
+            <h3>Tents</h3>
+            <p>Durable shelters for any adventure</p>
+          </a>
+        </article>
+        
+        <article class="category-card">
+          <a href="product-list.html?category=Backpacks">
+            <div class="category-image">
+              <img src="/images/categories/backpacks.jpg" alt="Backpacks" loading="lazy">
+            </div>
+            <h3>Backpacks</h3>
+            <p>Carry everything you need comfortably</p>
+          </a>
+        </article>
+        
+        <article class="category-card">
+          <a href="product-list.html?category=Sleeping%20Bags">
+            <div class="category-image">
+              <img src="/images/categories/sleeping-bags.jpg" alt="Sleeping Bags" loading="lazy">
+            </div>
+            <h3>Sleeping Bags</h3>
+            <p>Stay warm on cold nights</p>
+          </a>
+        </article>
+        
+        <article class="category-card">
+          <a href="product-list.html?category=Hammocks">
+            <div class="category-image">
+              <img src="/images/categories/hammocks.jpg" alt="Hammocks" loading="lazy">
+            </div>
+            <h3>Hammocks</h3>
+            <p>Relax in style anywhere</p>
+          </a>
+        </article>
+      </div>
+    </section>
   </main>
 
-  <script type="module">
-    import { addToCart, formatUSD } from './src/js/cart.js';
-    import { renderCartCount } from './src/js/header.js';
-    import { isDiscounted, createDiscountBadge } from './src/js/product.js';
+  <footer id="main-footer">
+    <!-- Footer injected by footer.js -->
+  </footer>
 
-    // Sample product data
-    const products = [
-      {
-        id: 'tent-01',
-        name: 'Alpine Tent',
-        price: 299.99,
-        finalPrice: 249.99,
-        image: 'https://via.placeholder.com/300x200/4CAF50/ffffff?text=Alpine+Tent'
-      },
-      {
-        id: 'bag-01',
+  <!-- Alert container for notifications -->
+  <div id="alert-container" class="alert-container"></div>
+
+  <script type="module" src="src/js/header.js"></script>
+  <script type="module" src="src/js/footer.js"></script>
+</body>
+</html>
+
         name: 'Winter Sleeping Bag',
         price: 149.99,
         image: 'https://via.placeholder.com/300x200/2196F3/ffffff?text=Sleeping+Bag'
