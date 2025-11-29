@@ -61,10 +61,12 @@ function getHeaderHTML() {
 }
 
 /**
- * Update cart badge count
+ * Update cart badge count and animate
  */
 function updateCartBadge() {
   const badge = document.getElementById('cart-count');
+  const cartLink = document.querySelector('.cart-link');
+  
   if (!badge) return;
   
   const count = getCartCount();
@@ -74,6 +76,25 @@ function updateCartBadge() {
     badge.style.display = 'none';
   } else {
     badge.style.display = 'flex';
+    
+    // Animate cart icon and badge
+    if (cartLink) {
+      cartLink.classList.remove('bounce');
+      void cartLink.offsetWidth; // Trigger reflow
+      cartLink.classList.add('bounce');
+      
+      setTimeout(() => {
+        cartLink.classList.remove('bounce');
+      }, 600);
+    }
+    
+    badge.classList.remove('pulse');
+    void badge.offsetWidth; // Trigger reflow
+    badge.classList.add('pulse');
+    
+    setTimeout(() => {
+      badge.classList.remove('pulse');
+    }, 600);
   }
 }
 

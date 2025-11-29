@@ -132,6 +132,9 @@ export function calculateCartTotal(cart = null) {
   }, 0);
 }
 
+// Alias for compatibility
+export const getCartTotal = calculateCartTotal;
+
 /**
  * Get total number of items in cart
  * @returns {number} Total item count
@@ -322,6 +325,22 @@ export function initCart() {
   window.addEventListener('cart:updated', () => {
     renderCartItems();
   });
+
+  // Handle checkout button
+  const checkoutBtn = document.querySelector('.btn-checkout');
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', () => {
+      const cart = getCart();
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+      // Import resolvePath
+      import('./utils.js').then(({ resolvePath }) => {
+        window.location.href = resolvePath('checkout.html');
+      });
+    });
+  }
 }
 
 // Auto-initialize if cart page elements exist

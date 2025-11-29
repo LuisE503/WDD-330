@@ -7,6 +7,7 @@
   <meta name="description" content="Shop quality outdoor gear including tents, backpacks, sleeping bags, and hammocks.">
   <link rel="stylesheet" href="src/css/base.css">
   <link rel="stylesheet" href="src/css/site.css">
+  <link rel="stylesheet" href="src/css/modal.css">
 </head>
 <body>
   <header id="main-header">
@@ -72,6 +73,17 @@
       </div>
       <div id="featured-products" class="product-grid">
         <!-- Products will be loaded here -->
+      </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+      <div class="newsletter-container">
+        <h2>📧 Stay Updated</h2>
+        <p>Subscribe to our newsletter for exclusive deals and outdoor tips!</p>
+        <button id="newsletter-signup-btn" class="btn btn-primary">
+          Subscribe Now
+        </button>
       </div>
     </section>
   </main>
@@ -242,6 +254,26 @@
 
     // Load products when page loads
     loadFeaturedProducts();
+  </script>
+
+  <!-- Newsletter & Welcome Modal -->
+  <script type="module">
+    import { showNewsletterModal, showWelcomeModal } from './src/js/modal.js';
+
+    // Newsletter button
+    const newsletterBtn = document.getElementById('newsletter-signup-btn');
+    if (newsletterBtn) {
+      newsletterBtn.addEventListener('click', showNewsletterModal);
+    }
+
+    // Show welcome modal on first visit
+    const hasSeenWelcome = localStorage.getItem('welcome-seen');
+    if (!hasSeenWelcome) {
+      // Show after 2 seconds
+      setTimeout(() => {
+        showWelcomeModal();
+      }, 2000);
+    }
   </script>
 </body>
 </html>

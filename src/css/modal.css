@@ -1,0 +1,284 @@
+/* Modal Styles */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: var(--spacing-md);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: white;
+  border-radius: var(--border-radius);
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.3s ease-out;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: var(--text-color);
+  box-shadow: var(--box-shadow);
+  transition: all 0.3s;
+  z-index: 10;
+}
+
+.modal-close:hover {
+  background: var(--error-color);
+  color: white;
+  transform: rotate(90deg);
+}
+
+.modal-content {
+  padding: var(--spacing-xxl);
+}
+
+/* Quick View Modal */
+.quick-view-modal .modal-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xxl);
+}
+
+.quick-view-image {
+  width: 100%;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.quick-view-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.quick-view-details h2 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+  font-size: 1.75rem;
+}
+
+.quick-view-category {
+  color: var(--text-light);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.quick-view-pricing {
+  margin: var(--spacing-lg) 0;
+}
+
+.quick-view-price {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.quick-view-price-original {
+  text-decoration: line-through;
+  color: var(--text-light);
+  font-size: 1.25rem;
+  margin-left: var(--spacing-sm);
+}
+
+.quick-view-description {
+  margin: var(--spacing-lg) 0;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.quick-view-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+}
+
+.quick-view-actions .btn {
+  flex: 1;
+}
+
+.quick-view-link {
+  display: inline-block;
+  margin-top: var(--spacing-md);
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.quick-view-link:hover {
+  text-decoration: underline;
+}
+
+/* Quick View Button on Product Cards */
+.product-card {
+  position: relative;
+}
+
+.quick-view-btn {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background: white;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  opacity: 0;
+  transform: translateY(-10px);
+  z-index: 5;
+}
+
+.product-card:hover .quick-view-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.quick-view-btn:hover {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: var(--box-shadow);
+}
+
+/* Newsletter Modal */
+.newsletter-modal .modal-content {
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.newsletter-modal h2 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.newsletter-form {
+  margin-top: var(--spacing-xl);
+}
+
+.newsletter-form input {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.newsletter-form input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.newsletter-form .btn {
+  width: 100%;
+}
+
+/* Welcome Banner Modal */
+.welcome-modal .modal-content {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.welcome-modal .welcome-icon {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.welcome-modal h2 {
+  color: var(--primary-color);
+  font-size: 2rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.welcome-modal .giveaway-info {
+  background: var(--bg-light);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius);
+  margin: var(--spacing-xl) 0;
+}
+
+.welcome-modal .giveaway-prize {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin: var(--spacing-md) 0;
+}
+
+.welcome-modal .actions {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+}
+
+.welcome-modal .actions .btn {
+  flex: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .quick-view-modal .modal-body {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-content {
+    padding: var(--spacing-lg);
+  }
+
+  .quick-view-btn {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .welcome-modal .actions {
+    flex-direction: column;
+  }
+}

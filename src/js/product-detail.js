@@ -176,9 +176,7 @@ export async function initProductDetail() {
   }
   
   try {
-    console.log('Fetching product:', productId);
     const product = await fetchProduct(productId);
-    console.log('Product loaded:', product);
     
     // Hide loading
     if (loadingElement) {

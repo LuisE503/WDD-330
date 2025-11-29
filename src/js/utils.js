@@ -129,11 +129,9 @@ export async function apiRequest(endpoint) {
     const baseURL = 'https://wdd330-backend.onrender.com';
     const url = `${baseURL}${endpoint}`;
     
-    console.log(`[API] Requesting: ${url}`);
+    if (DEV_MODE) console.log(`[API] Requesting: ${url}`);
     
     const response = await fetch(url);
-    
-    console.log(`[API] Response status: ${response.status}`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -141,9 +139,8 @@ export async function apiRequest(endpoint) {
     
     const data = await response.json();
     
-    console.log(`[API] Data received:`, data);
+    if (DEV_MODE) console.log(`[API] Data received:`, data);
     
-    return data;
     return data;
   } catch (error) {
     console.error('API request failed:', error);

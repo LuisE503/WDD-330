@@ -151,6 +151,7 @@ function renderProductCard(product) {
   const category = product.Category || product.category;
   
   card.innerHTML = `
+    <button class="quick-view-btn" data-product-id="${productId}">Quick View</button>
     <a href="${resolvePath(`product.html?id=${productId}`)}" class="product-link">
       ${hasDiscount ? `<span class="badge badge-discount">-${discount}%</span>` : ''}
       <div class="product-image">
@@ -176,6 +177,15 @@ function renderProductCard(product) {
       Add to Cart
     </button>
   `;
+  
+  // Quick view button handler
+  const quickViewBtn = card.querySelector('.quick-view-btn');
+  quickViewBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const { showQuickView } = await import('./modal.js');
+    showQuickView(product);
+  });
   
   // Add event listener to the button
   const addToCartBtn = card.querySelector('.add-to-cart-btn');
@@ -263,18 +273,13 @@ export async function initProductList() {
   
   try {
     if (category) {
-      console.log('Fetching products for category:', category);
       products = await fetchProductsByCategory(category);
     } else if (searchTerm) {
-      console.log('Searching products for term:', searchTerm);
       products = await fetchProductsBySearch(searchTerm);
     } else {
       // Default to showing tents if no parameters
-      console.log('No category or search term, showing default products');
       products = await fetchProductsByCategory('tents');
     }
-    
-    console.log('Products loaded:', products.length, products);
     
     // Hide loading
     if (loadingElement) {
